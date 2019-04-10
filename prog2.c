@@ -7,14 +7,14 @@
 #include<stdlib.h>
  
 int main( int argc, char* argv[] ) {
-    int fdone[2];
-    pid_t childid;
+    int fd[2];
+    pid_t cid;
  
     char readBuff[50];
     char writeBuff[50];
     int readCounter;
  
-    pipe( fdone );
+    pipe( fd );
  
     if( argc < 3 ) {
         printf( "Atleast need 2 params " );
@@ -28,30 +28,28 @@ int main( int argc, char* argv[] ) {
         printf( "Opening file failed " );
         exit(1);
     }
-    childid = fork();
+    cid = fork();
  
-    if( childid == 0 ) {
+    if( cid == 0 ) {
         // inside the child prcocess
-        close( fdone[1] );
+        close( fd[1] );
  
-        read( fdone[0], readBuff, sizeof( readBuff ) );
+        read( fd[0], readBuff, sizeof( readBuff ) );
         printf( "The recived string is : %s", readBuff );
  
         //Writing to the target fileOpen
         write( targetFile, readBuff, strlen( readBuff ) + 1 );
     } else {
         // inside the parent process
-        close( fdone[0] );
+        close( fd[0] );
         // code to read from a text file
  
-       ffd[1] = open(argv[2], O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+       
 
-	if (ffd[1] < 0) {
-  	fprintf(stderr,"Unable to open %s\n",argv[2]);
 
-  /* close the input file */
- 	 close(ffd[0]);
-
-  	return 1;
+ 	while( (readCounter = read( fileOpen, readBuff, sizeof( readBuff ) ) > 0 ) )  {
+        write( fd[1], readBuff, sizeof( readBuff ) );
+        }
+        close( fd[1] );
     }
 }
