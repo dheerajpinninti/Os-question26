@@ -44,9 +44,14 @@ int main( int argc, char* argv[] ) {
         close( fdone[0] );
         // code to read from a text file
  
-        while( (readCounter = read( fileOpen, readBuff, sizeof( readBuff ) ) > 0 ) )  {
-        write( fdone[1], readBuff, sizeof( readBuff ) );
-        }
-        close( fdone[1] );
+       ffd[1] = open(argv[2], O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
+
+	if (ffd[1] < 0) {
+  	fprintf(stderr,"Unable to open %s\n",argv[2]);
+
+  /* close the input file */
+ 	 close(ffd[0]);
+
+  	return 1;
     }
 }
